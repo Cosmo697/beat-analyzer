@@ -28,10 +28,10 @@ A personal dashboard for analyzing audio files in the browser to extract beat st
 ## Getting Started
 
 1. Clone the repository
-2. Install dependencies: `npm install`
+2. Install dependencies: `pnpm install`
 3. Copy `.env.local.example` to `.env.local` and update with your Supabase credentials
 4. Create the required table in your Supabase database (SQL in `.env.local.example`)
-5. Run the development server: `npm run dev`
+5. Run the development server: `pnpm run dev`
 6. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## Supabase Setup
@@ -43,7 +43,7 @@ A personal dashboard for analyzing audio files in the browser to extract beat st
 ## Local Development
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 The application will be available at [http://localhost:3000](http://localhost:3000).
