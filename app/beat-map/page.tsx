@@ -1,12 +1,27 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { analyzeAudio, AnalysisResult } from '@/lib/analyzeAudio';
 import { savePattern } from '@/lib/savePattern';
+import { fetchPatterns, StoredPattern } from '@/lib/fetchPatterns';
 
 export default function BeatMapPage() {
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [status, setStatus] = useState<string>('');
+  const [patterns, setPatterns] = useState<StoredPattern[]>([]);
+
+  const loadPatterns = async () => {
+    try {
+      const data = await fetchPatterns();
+      setPatterns(data);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    loadPatterns();
+  }, []);
 
   const handleAnalyze = async () => {
     if (!file) return;
@@ -31,6 +46,7 @@ export default function BeatMapPage() {
         beatVariance: result.beatVariance,
         patternVector: result.patternVector,
       });
+      await loadPatterns();
       setStatus('Saved to Supabase');
     } catch (e) {
       console.error(e);
@@ -62,6 +78,31 @@ export default function BeatMapPage() {
         </button>
       )}
       <p className="h-6">{status}</p>
+      <div className="mt-4">
+        <h2 className="font-semibold mb-2">Saved Patterns</h2>
+        {patterns.length === 0 ? (
+          <p className="text-sm text-gray-500">No patterns stored</p>
+        ) : (
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr className="border-b text-left">
+                <th className="py-1 pr-2">Label</th>
+                <th className="py-1 pr-2">BPM</th>
+                <th className="py-1 pr-2">Variance</th>
+              </tr>
+            </thead>
+            <tbody>
+              {patterns.map((p) => (
+                <tr key={p.id} className="border-b">
+                  <td className="py-1 pr-2">{p.label}</td>
+                  <td className="py-1 pr-2">{p.bpm?.toFixed(2)}</td>
+                  <td className="py-1 pr-2">{p.beat_variance.toFixed(4)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 }
